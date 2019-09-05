@@ -13,6 +13,7 @@ struct BuildPlan {
 #[derive(Debug, Deserialize)]
 struct Invocation {
     package_name: String,
+    package_version: String,
     program: String,
     args: Vec<String>,
 }
@@ -59,7 +60,7 @@ fn main() {
     let plan: BuildPlan = serde_json::from_str(&plan).expect("can't parse build plan");
 
     let krates = plan.invocations.into_iter().filter(select_crate).map(|krate| {
-        format!("{}\t{}", krate.package_name, extract_features(&krate.args).join(", "))
+        format!("{}:{}\t{}", krate.package_name, krate.package_version, extract_features(&krate.args).join(", "))
     });
 
     let stdout = io::stdout();
