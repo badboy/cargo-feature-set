@@ -14,6 +14,7 @@ struct BuildPlan {
 struct Invocation {
     package_name: String,
     package_version: String,
+    target_kind: Vec<String>,
     program: String,
     args: Vec<String>,
 }
@@ -60,14 +61,14 @@ fn main() {
     let plan: BuildPlan = serde_json::from_str(&plan).expect("can't parse build plan");
 
     let krates = plan.invocations.into_iter().filter(select_crate).map(|krate| {
-        format!("{}:{}\t{}", krate.package_name, krate.package_version, extract_features(&krate.args).join(", "))
+        format!("{}:{}\t{}\t{}", krate.package_name, krate.package_version, krate.target_kind.join(", "), extract_features(&krate.args).join(", "))
     });
 
     let stdout = io::stdout();
     let handle = stdout.lock();
     let mut tw = TabWriter::new(handle);
 
-    writeln!(&mut tw, "Crate\tFeatures").unwrap();
+    writeln!(&mut tw, "Crate\tTarget Kind\tFeatures").unwrap();
     writeln!(&mut tw, "=====\t========").unwrap();
 
     for line in krates {
