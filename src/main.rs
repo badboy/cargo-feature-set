@@ -69,7 +69,7 @@ fn main() {
     let mut tw = TabWriter::new(handle);
 
     writeln!(&mut tw, "Crate\tTarget Kind\tFeatures").unwrap();
-    writeln!(&mut tw, "=====\t========").unwrap();
+    writeln!(&mut tw, "=====\t===========\t========").unwrap();
 
     for line in krates {
         writeln!(&mut tw, "{}", line).unwrap();
