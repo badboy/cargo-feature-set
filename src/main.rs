@@ -63,7 +63,12 @@ fn extract_features(args: &[String]) -> Vec<String> {
 }
 
 fn main() {
-    let args = env::args().skip(1).collect();
+    let mut args = env::args().collect::<Vec<_>>();
+    if args.len() > 1 && args[1] == "feature-set" {
+        args.drain(0..2);
+    } else {
+        args.drain(0..1);
+    }
     let plan = cargo_buildplan(args);
     let plan: BuildPlan = serde_json::from_str(&plan).expect("can't parse build plan");
 
