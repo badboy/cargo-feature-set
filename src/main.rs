@@ -19,18 +19,23 @@ struct Invocation {
     args: Vec<String>,
 }
 
-fn cargo_buildplan() -> String {
+fn cargo_buildplan(args: Vec<String>) -> String {
     // Removing environment variables that might change the programs cargo plans to execute.
     // We won't execute anything, so we don't need it.
     env::remove_var("RUSTC_WRAPPER");
     env::remove_var("RUSTC");
 
-    let output = Command::new("cargo")
-        .arg("+nightly")
+    let mut cmd = Command::new("cargo");
+    cmd.arg("+nightly")
         .arg("-Z")
         .arg("unstable-options")
         .arg("build")
-        .arg("--build-plan")
+        .arg("--build-plan");
+    if !args.is_empty() {
+        cmd.args(args);
+    }
+
+    let output = cmd
         .output()
         .expect("failed to execute cargo");
 
@@ -58,7 +63,8 @@ fn extract_features(args: &[String]) -> Vec<String> {
 }
 
 fn main() {
-    let plan = cargo_buildplan();
+    let args = env::args().skip(1).collect();
+    let plan = cargo_buildplan(args);
     let plan: BuildPlan = serde_json::from_str(&plan).expect("can't parse build plan");
 
     let krates = plan
