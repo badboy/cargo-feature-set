@@ -2,7 +2,7 @@
 # It is not intended for manual editing.
 [[package]]
 name = "cargo-feature-set"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "cargo_metadata 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.99 (registry+https://github.com/rust-lang/crates.io-index)",
