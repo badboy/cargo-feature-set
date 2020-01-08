@@ -1,30 +1,27 @@
 # `cargo feature-set`
 
-Extract the features for every compiled crate from the build plan.
-
-Requires cargo nigthly.
+Extract the features for every compiled crate from `cargo metadata`.
 
 It looks like this:
 
 ```
-Crate                    Target Kind  Features
+Crate                    Features
 =====                    ========
-serde:1.0.99             custom-build  default, derive, serde_derive, std
-proc-macro2:1.0.2        custom-build  default, proc-macro
-unicode-xid:0.2.0        lib           default
-proc-macro2:1.0.2        lib           default, proc-macro
-quote:1.0.2              lib           default, proc-macro
-syn:1.0.5                custom-build  clone-impls, default, derive, parsing, printing, proc-macro, quote, visit
-syn:1.0.5                lib           clone-impls, default, derive, parsing, printing, proc-macro, quote, visit
-serde_derive:1.0.99      proc-macro    default
-serde:1.0.99             lib           default, derive, serde_derive, std
-itoa:0.4.4               lib           default, std
-ryu:1.0.0                custom-build  
-ryu:1.0.0                lib           
-serde_json:1.0.40        lib           default
-unicode-width:0.1.6      lib           default
-tabwriter:1.1.0          lib           default
-cargo-feature-set:0.1.0  bin           
+itoa:0.4.4               default, std
+quote:1.0.2              default, proc-macro
+serde_json:1.0.40        default
+tabwriter:1.1.0          default
+unicode-xid:0.2.0        default
+syn:1.0.5                clone-impls, default, derive, parsing, printing, proc-macro, quote, visit
+serde:1.0.99             default, derive, serde_derive, std
+unicode-width:0.1.6      default
+semver-parser:0.7.0
+proc-macro2:1.0.2        default, proc-macro
+cargo-feature-set:0.2.0
+semver:0.9.0             default, serde
+serde_derive:1.0.99      default
+ryu:1.0.0
+cargo_metadata:0.9.1     default
 ```
 
 ## License
