@@ -1,22 +1,48 @@
+use std::env;
 use std::io::{self, Write};
-use cargo_metadata::MetadataCommand;
+use cargo_metadata::{MetadataCommand, CargoOpt};
 use tabwriter::TabWriter;
 
+use structopt::StructOpt;
+
+/// Extract the features for every compiled crate from `cargo metadata`.
+#[derive(StructOpt, Debug)]
+#[structopt(name = "cargo-feature-set")]
+struct Opt {
+    /// Path to Cargo.toml
+    #[structopt(long)]
+    manifest_path: Option<String>,
+
+    /// Space-separated list of features to activate
+    #[structopt(long)]
+    features: Option<Vec<String>>,
+}
+
 fn main() {
-    let mut args = std::env::args().skip_while(|val| !val.starts_with("--manifest-path"));
+    let mut args = env::args().collect::<Vec<_>>();
+    if args.len() > 1 && args[1] == "feature-set" {
+        args.drain(0..1);
+    }
+
+    let opt = Opt::from_iter(args);
+
     let mut cmd = MetadataCommand::new();
 
-    match args.next() {
-        Some(ref p) if p == "--manifest-path" => {
-            cmd.manifest_path(args.next().unwrap());
-        }
-        Some(p) => {
-            cmd.manifest_path(p.trim_start_matches("--manifest-path="));
-        }
-        None => {}
-    };
+    if let Some(p) = opt.manifest_path {
+        cmd.manifest_path(p);
+    }
+    if let Some(f) = opt.features {
+        let features = CargoOpt::SomeFeatures(f);
+        cmd.features(features);
+    }
 
-    let metadata = cmd.exec().unwrap();
+    let metadata = match cmd.exec() {
+        Ok(metadata) => metadata,
+        Err(e) => {
+            eprintln!("{}", e);
+            std::process::exit(1);
+        }
+    };
     let resolve = metadata.resolve.unwrap();
     let packages = metadata.packages;
 
