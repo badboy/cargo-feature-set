@@ -53,7 +53,10 @@ fn main() {
     writeln!(&mut tw, "Crate\tFeatures").unwrap();
     writeln!(&mut tw, "=====\t========").unwrap();
 
-    for node in resolve.nodes {
+    let mut nodes = resolve.nodes;
+    nodes.sort_by(|left, right| left.id.cmp(&right.id));
+
+    for node in nodes {
         let id = node.id.clone();
         let package = match packages.iter().find(|p| p.id == id) {
             Some(package) => package,
