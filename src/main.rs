@@ -16,6 +16,10 @@ struct Opt {
     /// Space-separated list of features to activate
     #[structopt(long)]
     features: Option<Vec<String>>,
+
+    /// Only show root dependencies
+    #[structopt(short("R"), long)]
+    root_deps_only: bool,
 }
 
 fn main() {
@@ -54,6 +58,11 @@ fn main() {
     writeln!(&mut tw, "=====\t========").unwrap();
 
     let mut nodes = resolve.nodes;
+    if opt.root_deps_only {
+        let root_node_id = resolve.root.unwrap();
+        let root_node = nodes.iter().find(|n| n.id == root_node_id).unwrap().clone();
+        nodes.retain(|n| root_node.dependencies.contains(&n.id))
+    }
     nodes.sort_by(|left, right| left.id.cmp(&right.id));
 
     for node in nodes {
